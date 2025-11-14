@@ -26,17 +26,16 @@ A secure and user-friendly web application for managing and validating credit ca
 ## Screenshots
 
 - Login/Register Page:
-- <img width="2860" height="1799" alt="Screenshot 2025-11-14 171204" src="https://github.com/user-attachments/assets/3eae146b-09e0-4148-94e2-9c78a5a55926" />
+- <img width="2860" height="1799" alt="Screenshot 2025-11-14 171204" src="https://github.com/user-attachments/assets/2fda503c-73f4-45f9-a2f3-16ce88207c36" />
 
 - Dashboard:
-- <img width="2879" height="1799" alt="Screenshot 2025-11-14 172015" src="https://github.com/user-attachments/assets/cc2fb372-9ad4-4148-b218-bd35c0ed37be" />
-
+- <img width="2879" height="1799" alt="Screenshot 2025-11-14 172015" src="https://github.com/user-attachments/assets/1b2cf584-ab34-4617-922f-1ca7e1f5ad5b" />
 
 - Add Card Form:
--  <img width="2879" height="1710" alt="Screenshot 2025-11-14 172344" src="https://github.com/user-attachments/assets/da078a92-dfd6-490a-ae54-86e4af2bf557" />
+-  <img width="2879" height="1710" alt="Screenshot 2025-11-14 172344" src="https://github.com/user-attachments/assets/4bbb3b1d-95d3-4b6e-9c2c-84c2b04301db" />
 
 - Cards Overview:
-- <img width="2878" height="1799" alt="Screenshot 2025-11-14 172452" src="https://github.com/user-attachments/assets/878a7b5f-d9fa-4ccd-a313-17ebdf4b1055" />
+- <img width="2878" height="1799" alt="Screenshot 2025-11-14 172452" src="https://github.com/user-attachments/assets/f2fd15f7-7665-4300-ac08-903cfe71b190" />
 
 - Developer Dashboard:
-- <img width="2876" height="1799" alt="Screenshot 2025-11-14 172618" src="https://github.com/user-attachments/assets/79f65109-799a-4c4a-a39b-c926466e5ede" />
+- <img width="2876" height="1799" alt="Screenshot 2025-11-14 172618" src="https://github.com/user-attachments/assets/0447b586-c1ee-407b-a3b3-54ff8d57f59e" />
