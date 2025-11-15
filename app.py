@@ -82,12 +82,12 @@ def format_number(number):
 
 def validate_card(expiry):
     try:
-        mm, yy = expiry.split('/')
-        mm, yy = int(mm), int(yy)
-        if yy < 100:
-            yy += 2000
+        mm, yyyy = expiry.split('/')
+        mm, yyyy = int(mm), int(yyyy)
+        if yyyy < 100:
+            yyyy += 2000
         today = datetime.date.today()
-        return (yy > today.year) or (yy == today.year and mm >= today.month)
+        return (yyyy > today.year) or (yyyy == today.year and mm >= today.month)
     except:
         return False
 
