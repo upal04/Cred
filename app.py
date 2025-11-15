@@ -1,100 +1,82 @@
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
 import datetime
 import uuid
+import sqlite3
 import os
 import re
 import bcrypt
-import psycopg2  # For PostgreSQL
-from psycopg2.extras import RealDictCursor
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "your_secret_key_here")
+DB_FILE = os.path.join(os.path.dirname(__file__), "users.db")
 
-# Database connection function
-def get_db_connection():
-    # Use DATABASE_URL environment variable or your direct connection string
-    database_url = os.environ.get('DATABASE_URL', 'postgresql://credit_card_validator_user:5OXkLdcZVSKMS6qbJbJpd0dtwQfCLIf6@dpg-d4c87lk9c44c738l6010-a.oregon-postgres.render.com/credit_card_validator')
-    conn = psycopg2.connect(database_url)
-    return conn
-
-# Initialize database (run once)
 def init_db():
-    try:
-        conn = get_db_connection()
-        c = conn.cursor()
-        c.execute('''
-            CREATE TABLE IF NOT EXISTS users (
-                username TEXT PRIMARY KEY,
-                password TEXT NOT NULL
-            )
-        ''')
-        c.execute('''
-            CREATE TABLE IF NOT EXISTS cards (
-                id TEXT PRIMARY KEY,
-                username TEXT NOT NULL,
-                holder TEXT NOT NULL,
-                number TEXT NOT NULL,
-                expiry TEXT NOT NULL,
-                cvv TEXT NOT NULL,
-                FOREIGN KEY(username) REFERENCES users(username)
-            )
-        ''')
-        conn.commit()
-        conn.close()
-        print("Database initialized successfully")
-    except Exception as e:
-        print(f"Error initializing database: {e}")
-
-# Load users and cards
-def load_users():
-    conn = get_db_connection()
-    c = conn.cursor(cursor_factory=RealDictCursor)
-    c.execute("SELECT username, password FROM users")
-    users = {row['username']: {"password": row['password'], "cards": []} for row in c.fetchall()}
-    c.execute("SELECT id, username, holder, number, expiry, cvv FROM cards")
-    for row in c.fetchall():
-        card = {"id": row['id'], "holder": row['holder'], "number": row['number'], "expiry": row['expiry'], "cvv": row['cvv']}
-        if row['username'] in users:
-            users[row['username']]["cards"].append(card)
-    conn.close()
-    return users
-
-# Save user
-def save_user(username, password):
-    hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    conn = get_db_connection()
+    conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, hashed.decode('utf-8')))
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            username TEXT PRIMARY KEY,
+            password TEXT NOT NULL
+        )
+    ''')
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS cards (
+            id TEXT PRIMARY KEY,
+            username TEXT NOT NULL,
+            holder TEXT NOT NULL,
+            number TEXT NOT NULL,
+            expiry TEXT NOT NULL,
+            cvv TEXT NOT NULL,
+            FOREIGN KEY(username) REFERENCES users(username)
+        )
+    ''')
     conn.commit()
     conn.close()
 
-# Save card
-def save_card(username, card):
-    conn = get_db_connection()
+def load_users():
+    conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("INSERT INTO cards (id, username, holder, number, expiry, cvv) VALUES (%s, %s, %s, %s, %s, %s)",
+    c.execute("SELECT username, password FROM users")
+    users = {row[0]: {"password": row[1], "cards": []} for row in c.fetchall()}
+    c.execute("SELECT id, username, holder, number, expiry, cvv FROM cards")
+    for row in c.fetchall():
+        card = {"id": row[0], "holder": row[2], "number": row[3], "expiry": row[4], "cvv": row[5]}
+        if row[1] in users:
+            users[row[1]]["cards"].append(card)
+    conn.close()
+    return users
+
+def save_user(username, password):
+    hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed.decode('utf-8')))
+    conn.commit()
+    conn.close()
+
+def save_card(username, card):
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute("INSERT INTO cards (id, username, holder, number, expiry, cvv) VALUES (?, ?, ?, ?, ?, ?)",
               (card['id'], username, card['holder'], card['number'], card['expiry'], card['cvv']))
     conn.commit()
     conn.close()
 
-# Delete user
 def delete_user(username):
-    conn = get_db_connection()
+    conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("DELETE FROM cards WHERE username = %s", (username,))
-    c.execute("DELETE FROM users WHERE username = %s", (username,))
+    c.execute("DELETE FROM cards WHERE username = ?", (username,))
+    c.execute("DELETE FROM users WHERE username = ?", (username,))
     conn.commit()
     conn.close()
 
-# Delete card
 def delete_card(card_id):
-    conn = get_db_connection()
+    conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("DELETE FROM cards WHERE id = %s", (card_id,))
+    c.execute("DELETE FROM cards WHERE id = ?", (card_id,))
     conn.commit()
     conn.close()
 
-# Helper functions (unchanged)
 def format_number(number):
     return ' '.join([number[i:i+4] for i in range(0, len(number), 4)])
 
@@ -152,7 +134,8 @@ def register(username, password):
     save_user(username, password)
     return True, "Account created successfully!"
 
-# Routes (unchanged)
+# Routes
+
 @app.route('/')
 def index():
     return redirect(url_for('landing'))
