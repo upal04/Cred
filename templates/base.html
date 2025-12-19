@@ -15,7 +15,7 @@
             <a class="navbar-brand" href="#"><i class="fas fa-credit-card"></i> Credit Card Manager</a>
             {% if session.current_user %}
             <div class="d-flex align-items-center">
-                <span class="navbar-text me-3">Welcome, {{ session.current_user }}</span>
+                <span class="navbar-text me-3">Upal's_Credit_Card_Validator, {{ session.current_user }}</span>
                 <button class="btn btn-outline-secondary me-2" id="darkModeToggle"><i class="fas fa-moon"></i></button>
                 <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
             </div>
@@ -58,4 +58,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static_files', filename='script.js') }}"></script>
 </body>
+
 </html>
